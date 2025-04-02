@@ -39,6 +39,7 @@ public class Assignment implements Expression, Node {
     public MIPSResult toMIPS(StringBuilder code, StringBuilder data, SymbolTable symbolTable,
             RegisterAllocator regAllocator) {
         // TODO: Apply to other operators
+        symbolTable.wantsAddr();
         MIPSResult mutMips = mutable.toMIPS(code, data, symbolTable, regAllocator);
         code.append(String.format("# Compute rhs for assignment %s\n", type));
         MIPSResult exprMips = rhs.toMIPS(code, data, symbolTable, regAllocator);

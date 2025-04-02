@@ -42,14 +42,18 @@ public class SymbolTable {
         offsets.put(id, offset);
     }
 
-    public void wantsValue(){
+    public void wantsAddr(){
         valFlag = true;
     }
 
-    public boolean doesReturnValue(){
+    public boolean doesReturnAddr(){
         boolean ret = valFlag;
         valFlag = false;
         return ret;
+    }
+
+    public int size() {
+        return this.size;
     }
 
     public void setStackPointer(int sp) {

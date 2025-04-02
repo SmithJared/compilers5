@@ -17,11 +17,11 @@ import submit.SymbolTable;
 public class CompoundStatement implements Statement, AbstractNode {
 
     private final List<Statement> statements;
-    private final SymbolTable symbolTable;
+    private final SymbolTable symTable;
 
     public CompoundStatement(List<Statement> statements, SymbolTable symbolTable) {
         this.statements = statements;
-        this.symbolTable = symbolTable;
+        this.symTable = symbolTable;
     }
 
     @Override
@@ -35,9 +35,10 @@ public class CompoundStatement implements Statement, AbstractNode {
 
     @Override
     public MIPSResult toMIPS(StringBuilder code, StringBuilder data, SymbolTable symbolTable, RegisterAllocator regAllocator) {
+        this.symTable.setStackPointer(-symbolTable.size());
         
         for(Statement s : statements){
-            s.toMIPS(code, data, this.symbolTable, regAllocator);
+            s.toMIPS(code, data, this.symTable, regAllocator);
         }
 
 

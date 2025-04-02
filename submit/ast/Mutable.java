@@ -46,7 +46,16 @@ public class Mutable implements Expression, Node {
         }
 
         VarType type = symbolTable.find(id).getType();
-        if(symbolTable.doesReturnValue()){
+        if(symbolTable.doesReturnAddr()){
+            code.append(String.format("# Get %s's offset from $sp from the symbol table and initialize %s's address with it. We'll add $sp later.\n", id, id));
+            String reg = regAllocator.getAny();
+            int offset = symbolTable.getOffset(id);
+            code.append(String.format("li %s %d\n", reg, offset));
+    
+            code.append("# Add the stack pointer address to the offset.\n");
+            code.append(String.format("add %s %s $sp\n", reg, reg));
+            return MIPSResult.createAddressResult(reg, type);
+        }else {
             String ret = regAllocator.getAny();
             
             code.append(String.format("# Get %s's offset from $sp from the symbol table and initialize %s's address with it. We'll add $sp later.\n", id, id));
@@ -61,15 +70,6 @@ public class Mutable implements Expression, Node {
             code.append(String.format("lw %s 0(%s)\n", ret, reg));
             regAllocator.clear(reg);
             return MIPSResult.createRegisterResult(ret, type);
-        }else {
-            code.append(String.format("# Get %s's offset from $sp from the symbol table and initialize %s's address with it. We'll add $sp later.\n", id, id));
-            String reg = regAllocator.getAny();
-            int offset = symbolTable.getOffset(id);
-            code.append(String.format("li %s %d\n", reg, offset));
-    
-            code.append("# Add the stack pointer address to the offset.\n");
-            code.append(String.format("add %s %s $sp\n", reg, reg));
-            return MIPSResult.createAddressResult(reg, type);
         }
     }
 

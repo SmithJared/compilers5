@@ -39,9 +39,7 @@ public class BinaryOperator implements Expression, AbstractNode {
     @Override
     public MIPSResult toMIPS(StringBuilder code, StringBuilder data, SymbolTable symbolTable,
             RegisterAllocator regAllocator) {
-        symbolTable.wantsValue();
         MIPSResult lhsResult = lhs.toMIPS(code, data, symbolTable, regAllocator);
-        symbolTable.wantsValue();
         MIPSResult rhsResult = rhs.toMIPS(code, data, symbolTable, regAllocator);
         String leftReg = lhsResult.getRegister();
         String rightReg = rhsResult.getRegister();
