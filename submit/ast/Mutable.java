@@ -44,21 +44,33 @@ public class Mutable implements Expression, Node {
         if(index != null){
             return null;
         }
-        
-        code.append(String.format("# Get %s's offset from $sp from the symbol table and initialize %s's address with it. We'll add $sp later.\n", id, id));
-        String reg = regAllocator.getAny();
-        int offset = symbolTable.getOffset(id);
-        code.append(String.format("li %s %d\n", reg, offset));
 
-        code.append("# Add the stack pointer address to the offset.\n");
-        code.append(String.format("add %s %s $sp\n", reg, reg));
-        symbolTable.idInRegister(reg, id); 
+        VarType type = symbolTable.find(id).getType();
+        if(symbolTable.doesReturnValue()){
+            String ret = regAllocator.getAny();
+            
+            code.append(String.format("# Get %s's offset from $sp from the symbol table and initialize %s's address with it. We'll add $sp later.\n", id, id));
+            String reg = regAllocator.getAny();
+            int offset = symbolTable.getOffset(id);
+            code.append(String.format("li %s %d\n", reg, offset));
+    
+            code.append("# Add the stack pointer address to the offset.\n");
+            code.append(String.format("add %s %s $sp\n", reg, reg));
 
-        if(stored){// Value had already been stored
-            code.append(String.format("# Load the value of %s.", id));
+            code.append(String.format("# Load the value of %s.\n", id));
+            code.append(String.format("lw %s 0(%s)\n", ret, reg));
+            regAllocator.clear(reg);
+            return MIPSResult.createRegisterResult(ret, type);
+        }else {
+            code.append(String.format("# Get %s's offset from $sp from the symbol table and initialize %s's address with it. We'll add $sp later.\n", id, id));
+            String reg = regAllocator.getAny();
+            int offset = symbolTable.getOffset(id);
+            code.append(String.format("li %s %d\n", reg, offset));
+    
+            code.append("# Add the stack pointer address to the offset.\n");
+            code.append(String.format("add %s %s $sp\n", reg, reg));
+            return MIPSResult.createAddressResult(reg, type);
         }
-
-        return MIPSResult.createAddressResult(id, null);
     }
 
 }

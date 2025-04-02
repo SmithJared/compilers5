@@ -21,8 +21,7 @@ public class SymbolTable {
     private int sp;
     private int size;
     private HashMap<String, Integer> offsets;
-    // <Address, Id>
-    private HashMap<String, String> stack;
+    private boolean valFlag;
 
     public SymbolTable() {
         table = new HashMap<>();
@@ -31,7 +30,6 @@ public class SymbolTable {
         sp = 0;
         size = 0;
         offsets = new HashMap<>();
-        address = new HashMap<>();
 
         table.put("println", new SymbolInfo("println", null, true)); // Add the println function to the global
         table.put("return", new SymbolInfo("return", null, false)); // Add the println function to the global
@@ -39,21 +37,23 @@ public class SymbolTable {
 
     public void addSymbol(String id, SymbolInfo symbol) {
         table.put(id, symbol);
-        int offset = this.size;
         this.size += 4;
+        int offset = -this.size;
         offsets.put(id, offset);
+    }
+
+    public void wantsValue(){
+        valFlag = true;
+    }
+
+    public boolean doesReturnValue(){
+        boolean ret = valFlag;
+        valFlag = false;
+        return ret;
     }
 
     public void setStackPointer(int sp) {
         this.sp = sp;
-    }
-
-    public void idInRegister(String register, String id) {
-        address.put(register, id);
-    }
-
-    public String regToId(String addr) {
-        return address.get(addr);
     }
 
     // If has has been sized

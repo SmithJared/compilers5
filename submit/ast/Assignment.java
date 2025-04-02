@@ -47,7 +47,7 @@ public class Assignment implements Expression, Node {
         String exprReg = exprMips.getRegister();
 
         code.append("# complete assignment statement with store\n");
-        code.append(String.format("sw %s 0(%s)", exprReg, mutAddrReg));
+        code.append(String.format("sw %s 0(%s)\n", exprReg, mutAddrReg));
         regAllocator.clear(exprReg);
         regAllocator.clear(mutAddrReg);
 

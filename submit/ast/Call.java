@@ -51,7 +51,7 @@ public class Call implements Expression, AbstractNode {
         // MIPSResult result = MIPSResult.createRegisterResult();
 
         // return result;
-        return null;
+        return MIPSResult.createVoidResult();
     }
 
     private MIPSResult print(StringBuilder code, StringBuilder data, SymbolTable symbolTable,

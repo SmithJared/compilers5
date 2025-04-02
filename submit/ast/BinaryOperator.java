@@ -39,35 +39,14 @@ public class BinaryOperator implements Expression, AbstractNode {
     @Override
     public MIPSResult toMIPS(StringBuilder code, StringBuilder data, SymbolTable symbolTable,
             RegisterAllocator regAllocator) {
+        symbolTable.wantsValue();
         MIPSResult lhsResult = lhs.toMIPS(code, data, symbolTable, regAllocator);
-        if(lhsResult.getRegister() == null){
-            String id = lhsResult.getAddress();
-            String 
-            code.append(String.format("# Get %s's offset from $sp from the symbol table and initialize %s's address with it. We'll add $sp later.\n", id, id));
-            String reg = regAllocator.getAny();
-            int offset = symbolTable.getOffset(id);
-            code.append(String.format("li %s %d\n", reg, offset));
-
-            code.append("# Add the stack pointer address to the offset.\n");
-            code.append(String.format("add %s %s $sp\n", reg, reg));
-            symbolTable.idInRegister(reg, id); 
-
-            if(stored){// Value had already been stored
-                code.append(String.format("# Load the value of %s.", id));
-            }
-        }
-
-
+        symbolTable.wantsValue();
         MIPSResult rhsResult = rhs.toMIPS(code, data, symbolTable, regAllocator);
         String leftReg = lhsResult.getRegister();
         String rightReg = rhsResult.getRegister();
 
         System.out.println("lhs:" + lhs + "result" + lhsResult + "rhs:" + rhs + "result" + rhsResult);
-        // If value is in memory then load it first
-        if(leftReg == null){
-            leftReg = lhsResult.getAddress();
-            code.append(String.format("lw %s 0(%s)", ))
-        }
 
         switch (type) {
             case PLUS:
